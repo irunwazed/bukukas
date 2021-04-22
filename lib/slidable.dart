@@ -9,6 +9,7 @@ class SlidableScreen extends StatefulWidget {
 
 class _SlidableScreenState extends State<SlidableScreen> {
   
+  var loading = false;
   final List<HomeModal> items = List.generate(
     20,
     (i) => HomeModal(
@@ -19,6 +20,40 @@ class _SlidableScreenState extends State<SlidableScreen> {
     ),
   );
 
+  ScrollController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = new ScrollController()..addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  void _scrollListener() async {
+    // print(controller.position.extentAfter);
+    await new Future.delayed(const Duration(seconds: 5), () => "1");
+    if (controller.position.extentAfter == 0) {
+      
+        items.addAll(new List.generate(15, (i) => HomeModal(
+          i,
+          'Slide Bar $i',
+          'Slide Bar $i',
+          Colors.green
+        ),));
+
+      setState(() {
+        print('cari');
+      });
+      
+    await new Future.delayed(const Duration(seconds: 5), () => "1");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +62,7 @@ class _SlidableScreenState extends State<SlidableScreen> {
       ),
       body: Container(
         child: ListView.builder(
+          controller: controller,
           itemBuilder: (context, index){
             return _getSlidable(items[index]);
           },
